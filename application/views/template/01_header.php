@@ -61,6 +61,13 @@
         <link rel="stylesheet" href="<?php echo base_url('assets/datepicker-multiple/css/bootstrap-datepicker3.css'); ?>"/>
     
     <?php }
+
+    if (isset($daterangepicker) AND $daterangepicker == true){ ?>
+
+        <script type="text/javascript" src="<?php echo base_url('assets/daterangepicker/daterangepicker.min.js'); ?>"></script>
+        <link rel="stylesheet" href="<?php echo base_url('assets/daterangepicker/daterangepicker.css'); ?>"/>
+    
+    <?php }
 ?>
 
 </head>

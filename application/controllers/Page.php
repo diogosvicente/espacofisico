@@ -39,6 +39,7 @@ class Page extends CI_Controller {
 			$data['crypto'] = true;
 			$data['moment'] = true;
 			$data['datepicker_multiple'] = true;
+			$data['daterangepicker'] = true;
 
 			$data['local_selecionado'] = $this->input->post('local');
 
