@@ -32,6 +32,15 @@ class Page extends CI_Controller {
 			$id_usuario = $this->session->usuario_logado['id_usuario'];
 			// Passando dados do usuário para a view
 			$data['dados_usuario'] = $this->usuarios_model->getUserData($id_usuario);
+			$data['locais'] = $this->locais_model->locais();
+
+			$data['fullcalendar'] = true;
+			$data['sweet_alert'] = true;
+			$data['crypto'] = true;
+			$data['moment'] = true;
+			$data['datepicker_multiple'] = true;
+
+			$data['local_selecionado'] = $this->input->post('local');
 
 			$data['page_title'] = 'Espaço Físico - Gerenciar Reservas';
 			$this->load->view('template/01_header', $data);
@@ -40,6 +49,13 @@ class Page extends CI_Controller {
 			$this->load->view('view_gerenciar_reservas');
 			$this->load->view('template/04_footer');
 
+		}else{
+			$this->load->view('view_login');
+		}
+	}
+
+	function reservas(){
+		if($this->session->userdata("usuario_logado")){
 		}else{
 			$this->load->view('view_login');
 		}

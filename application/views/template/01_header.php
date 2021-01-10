@@ -11,6 +11,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
     <meta name="description" content="This is an example dashboard created using build-in elements and components.">
     <meta name="msapplication-tap-highlight" content="no">
+    <!--===============================================================================================-->  
+    <link rel="icon" type="image/png" href="<?php echo base_url('assets/Login_v19/images/logomarca-uerj.png'); ?>"/>
     <!--
     =========================================================
     * ArchitectUI HTML Theme Dashboard - v1.0.0
@@ -26,17 +28,15 @@
     echo (isset($fullcalendar) && $fullcalendar == true) ?
     "<link href='" . base_url("assets/fullcalendar-5.3.2/lib/main.css") . "' rel='stylesheet' />" : "" ;
 
-    if (isset($map) && $map == true){ ?>
+    echo (isset($moment) && $moment == true) ?
+    "<script src='" . base_url('assets/daterangepicker/moment.min.js') . "'></script>" : "" ;
 
-        <link rel="stylesheet" type="text/css" href="<?= base_url('assets/map/css/style.css') ?>">
+    if (isset($sweet_alert) && $sweet_alert == true) { ?>
+
+        <script type="text/javascript" src="<?= base_url('assets/sweet_alert_2/sweetalert2@10.js'); ?>"></script>
         <script type="text/javascript" src="<?= base_url('assets/jquery/jquery-3.5.1.min.js'); ?>"></script>
-        <script type="text/javascript" src="<?= base_url('assets/map/js/jquery.maphilight.js'); ?>"></script>
-        <script type="text/javascript" src="<?= base_url('assets/sweet_alert_2/sweetalert2@10.js'); ?>"></script>        
 
     <?php }
-
-    echo (isset($moment) && $moment == true) ?
-    "<script src='" . base_url('assets/login/vendor/daterangepicker/moment.min.js') . "'></script>" : "" ;
 
     if (isset($datatables) && $datatables == true) { ?>
 
@@ -54,8 +54,13 @@
         <script type="text/javascript" src="<?= base_url('assets/jquery/jquery-3.5.1.min.js'); ?>"></script>
 
     <?php }
-    
 
+    if (isset($datepicker_multiple) AND $datepicker_multiple == true){ ?>
+
+        <script type="text/javascript" src="<?php echo base_url('assets/datepicker-multiple/js/bootstrap-datepicker.min.js'); ?>"></script>
+        <link rel="stylesheet" href="<?php echo base_url('assets/datepicker-multiple/css/bootstrap-datepicker3.css'); ?>"/>
+    
+    <?php }
 ?>
 
 </head>

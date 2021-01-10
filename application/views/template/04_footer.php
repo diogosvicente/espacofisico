@@ -45,14 +45,12 @@
     <script type="text/javascript" src="<?= base_url('assets/template/src/js/main.js'); ?>"></script>
     <?php
 
-        echo (isset($fullcalendar) && $fullcalendar == true) ?
-        "<script src='" . base_url('assets/fullcalendar-5.3.2/lib/main.js') . "'></script>" : "" ;
+        if (isset($fullcalendar) && $fullcalendar == true){ ?>
 
-        echo (isset($fullcalendar) && $fullcalendar == true) ?
-        "<script src='" . base_url('assets/fullcalendar-5.3.2/lib/locales/pt-br.js') . "'></script>" : "" ;
+            <script src="<?php echo base_url('assets/fullcalendar-5.3.2/lib/main.js'); ?>"></script>
+            <script src="<?php echo base_url('assets/fullcalendar-5.3.2/lib/locales/pt-br.js'); ?>"></script>
 
-        echo (isset($map)) ?
-        "<script src='" . base_url('assets/map/js/script.js') . "'></script>" : "" ;
+        <?php }
 
         echo (isset($crypto) && $crypto == true) ?
         "<script src='" . base_url('assets/crypto/crypto-js.min.js') . "'></script>" : "" ;
