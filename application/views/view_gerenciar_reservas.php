@@ -134,7 +134,7 @@
 
 	<div id="botao_enviar">
 		<hr>
-		<!-- <button type="submit" name="submit" id="submit" class="btn btn-success" value="Cadastrar">Cadastrar</button> -->
+		<button type="submit" name="submit" id="submit" class="btn btn-success" value="Cadastrar">Cadastrar</button>
 	</div>
 </div>
 
@@ -239,10 +239,12 @@
     		$("#myrosterdate").prop("disabled", false);
     		$("#h5_class").removeClass("alert_class");
     		$("#botao_enviar").show();
+    		$("#daterange").prop("disabled", false);
     	}else{
     		$("#myrosterdate").prop("disabled", true);
     		$("#h5_class").addClass("alert_class");
     		$("#botao_enviar").hide();
+    		$("#daterange").prop("disabled", true);
     	}
     });
 
@@ -254,11 +256,15 @@
     		$("#myrosterdate").prop("disabled", false);
     		$("#h5_class").removeClass("alert_class");
     		$("#botao_enviar").show();
+    		$('div#periodo_escolhido_2 #something').remove();
+    		$("#daterange").prop("disabled", false);
     	}else{
     		$("#periodo_escolhido").hide();
     		$("#myrosterdate").prop("disabled", true);
     		$("#h5_class").addClass("alert_class");
     		$("#botao_enviar").hide();
+    		$('div#periodo_escolhido_2 #something').remove();
+    		$("#daterange").prop("disabled", true);
     	}
     });
 
@@ -268,6 +274,8 @@
     		$("#definir_horario_2").prop("checked", false);
     		$("#periodo_escolhido").hide();
     		$("#myrosterdate").prop("disabled", false);
+    		$("#daterange").prop("disabled", false);
+    		$("#botao_enviar").show();
 
     		function setNumero(number) {
 			numero = number; // numero foi criado no escopo global
@@ -298,6 +306,9 @@
     		$("#myrosterdate").prop("disabled", true);
     		$("#h5_class").addClass("alert_class");
     		$("#botao_enviar").hide();
+    		$('div#periodo_escolhido_2 #something').remove();
+    		$("#botao_enviar").hide();
+    		$("#daterange").prop("disabled", true);
     	}
     });
 
