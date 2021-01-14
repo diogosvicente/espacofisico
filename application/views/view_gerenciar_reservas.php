@@ -11,28 +11,29 @@
 <button id="botao_cadastrar" class="btn btn-success"><i class="fas fa-plus-circle"></i> Adicionar nova</button>
 <button id="botao_grocery_crud" class="btn btn-info"><i class="fa fa-list" aria-hidden="true"></i> Exibir espaços reservados</button>
 
+<form id="someform" enctype="multipart/form-data">
+
+<div class="alert" id="alert" role="alert"></div>
+
 <div class="alert alert-info" role="alert" id="alerta_local">
 	<h5><b>SELECIONE O LOCAL</b></h5>
 	<hr>
 
-	<?php $array_local = array();
-		$array_local = array("" => "--- Selecione um local ---");
-		foreach ($locais as $value) {
-			$array_local[$value->id_local] = $value->nome_local;
-		}
-	$dados['array_local'] = $array_local;
-	echo form_dropdown('local', $array_local, $local_selecionado, 'id="local" class="form-control"');
-	?>
-
+	<select name="local" id="local" class="form-control">
+		<option value="">--- Selecione um local ---</option>
+		<?php foreach ($locais as $value) {
+				echo "<option value='$value->id_local'>$value->nome_local</option>";
+		} ?>	
+	</select>
 </div>
-<form id="someform">
+
 <div class="alert alert-info" role="alert" id="alerta_periodo">
 	<h5><b>SELECIONE A DATA</b></h5>
 	<hr>
 	<div class="form-check" id="first_date">
 		<input class="form-check-input" type="checkbox" name="data_1" id="data_1" style="transform: scale(1.5);">
 		<label class="form-check-label" for="data_1">
-			O evento acontercerá em apenas em dia
+			O evento acontercerá em apenas em um dia
 		</label>
 	</div>
 	<div class="form-check" id="second_date">
@@ -50,7 +51,7 @@
 
 	<hr>
 
-	<input type="text" id="datepicker" name="data_unica" class="form-control" placeholder="--- Selecione uma data ---">
+	<input type="text" id="datepicker" name="datepicker" class="form-control" placeholder="--- Selecione uma data ---">
 
 	<input type="text" id="myrosterdate" name="myrosterdate" class="form-control" placeholder="--- Selecione as datas ---" />
 
@@ -61,17 +62,33 @@
 <div class="alert alert-info" role="alert" id="alerta_horario">
 	<h5><b>SELECIONE O HORÁRIO</b></h5>
 	<hr>
-	<div class="form-group row">
-		<label class="col-sm-1 col-form-label">INÍCIO</label>
-		<div class="col-sm-11">
-			<input type="time" id="horario_1_inicio" name="horario_1_inicio" class="form-control">
+
+	<div class="form-check" id="first_date_def">
+		<input class="form-check-input" type="checkbox" name="horario_unico" id="horario_unico" style="transform: scale(1.5);">
+		<label class="form-check-label" for="horario_unico">
+			Não vou definir horário (ficará agendado como "Dia Todo")
+		</label>
+	</div>
+
+	<div id="def_horario">
+		<hr>
+		<div class="form-group row">
+			<label class="col-sm-1 col-form-label">INÍCIO</label>
+			<div class="col-sm-11">
+				<input type="time" id="horario_1_inicio" name="horario_1_inicio" class="form-control">
+			</div>
+		</div>
+		<div class="form-group row">
+			<label class="col-sm-1 col-form-label">FIM</label>
+			<div class="col-sm-11">
+				<input type="time" id="horario_1_fim" name="horario_1_fim" class="form-control">
+			</div>
 		</div>
 	</div>
-	<div class="form-group row">
-		<label class="col-sm-1 col-form-label">FIM</label>
-		<div class="col-sm-11">
-			<input type="time" id="horario_1_fim" name="horario_1_fim" class="form-control">
-		</div>
+
+	<div id="botao_enviar">
+		<hr>
+		<button type="submit" name="submit" id="submit" class="btn btn-success" value="Cadastrar">Cadastrar</button>
 	</div>
 </div>
 
@@ -117,7 +134,7 @@
 
 	<div id="botao_enviar">
 		<hr>
-		<button type="submit" name="submit" id="submit" class="btn btn-success" value="Cadastrar">Cadastrar</button>
+		<!-- <button type="submit" name="submit" id="submit" class="btn btn-success" value="Cadastrar">Cadastrar</button> -->
 	</div>
 </div>
 
@@ -163,6 +180,7 @@
 			$("#daterange").hide();
 			$("#alerta_horario").show();
 			$("#alerta_horario_definir").hide();
+			$("#botao_enviar").show();
     	}else{
     		$("#datepicker").hide();
     		$("#alerta_horario").hide();
@@ -197,6 +215,14 @@
     	}else{
     		$("#daterange").hide();
     		$("#alerta_horario_definir").hide();
+    	}
+    });
+
+    $("#horario_unico").change(function(event){
+    	if (this.checked){
+    		$("#def_horario").hide();
+    	}else{
+    		$("#def_horario").show();
     	}
     });
 
@@ -275,11 +301,6 @@
     	}
     });
 
-
-    $("#datepicker").on("change paste keyup", function() {
-		$(this).val(); 
-	});
-
 	//datepicker multiple
 	var date_input=$('input[name="myrosterdate"]'); //our date input has the name "myrosterdate"
 	var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
@@ -292,16 +313,87 @@
 	};
 	date_input.datepicker(options);
 
-});
-</script>
+	//validação
+	$.validator.setDefaults({
+	    submitHandler: function () {
+	      // pega os valores digitados nos inputs
+			var local = $('#local').val();
+			var datepicker = $('#datepicker').val();
+			var horario_1_inicio = $('#horario_1_inicio').val();
+			var horario_1_fim = $('#horario_1_fim').val();			
 
-<script>
-	$( function(){
-		$("#datepicker").datepicker();
+			// instanciando formdata na variavel fd
+			var fd = new FormData();
+
+			// adicionando valores dos inputs na variável fd
+			fd.append('local', local);
+			fd.append('datepicker', datepicker);
+			fd.append('horario_1_inicio', horario_1_inicio);
+			fd.append('horario_1_fim', horario_1_fim);
+
+			// iniciando função ajax para submissão do form
+			$.ajax({
+				url:'<?php echo base_url("actions/enviar_reserva"); ?>',
+				method: 'post',
+				data: fd,
+				contentType: false,
+				processData: false,
+				success: function(result) {
+					$('form').trigger("reset");
+					$('#alert').fadeIn().html(result);
+				}
+		      });
+		    }
+		  });
+		$('#someform').validate({ //validação do formulário  
+		    rules: {
+		    	local: {
+		    		required: true
+		    	},
+		    	datepicker: {
+		    		required: true
+		    	},
+		    	horario_1_inicio: {
+		    		required: true
+		    	},
+				horario_1_fim: {
+		    		required: true
+		    	},
+		    },
+		    messages: {
+		    	local: {
+		        	required: "Campo Obrigatório",
+		      	},
+		      	datepicker: {
+			        required: "Campo Obrigatório",
+		      	},
+		      	horario_1_inicio: {
+		    		required: "Campo Obrigatório",
+		    	},
+				horario_1_fim: {
+		    		required: "Campo Obrigatório",
+		    	},
+		    },
+		    errorElement: 'span',
+		    errorPlacement: function (error, element) {
+		      error.addClass('invalid-feedback');
+		      element.closest('.form-group').append(error);
+		    },
+		    highlight: function (element, errorClass, validClass) {
+		      $(element).addClass('is-invalid');
+		    },
+		    unhighlight: function (element, errorClass, validClass) {
+		      $(element).removeClass('is-invalid');
+		    }
+		  });
+
+	// input tipo data única
+	$("#datepicker").datepicker({
+		autoclose: true
 	});
+});
+
 </script>
-
-
 
 <script>
 $(function(){
@@ -347,3 +439,6 @@ $(function(){
    	$('input[name="daterange"]').attr("placeholder","--- Selecione um intervalo ---");
 });
 </script>
+
+<script src="<?php echo base_url('assets/jquery-validation/jquery.validate.min.js'); ?>"></script>
+<script src="<?php echo base_url('assets/jquery-validation/additional-methods.min.js'); ?>"></script>

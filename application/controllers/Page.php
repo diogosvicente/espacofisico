@@ -41,8 +41,6 @@ class Page extends CI_Controller {
 			$data['datepicker_multiple'] = true;
 			$data['daterangepicker'] = true;
 
-			$data['local_selecionado'] = $this->input->post('local');
-
 			$data['page_title'] = 'Espaço Físico - Gerenciar Reservas';
 			$this->load->view('template/01_header', $data);
 			$this->load->view('template/02_topbar');
