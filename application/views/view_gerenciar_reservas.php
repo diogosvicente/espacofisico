@@ -96,19 +96,19 @@
 	<h5 id="h5_class"><b>SELECIONE O HORÁRIO</b></h5>
 	<hr>
 	<div class="form-check" id="first_date">
-		<input class="form-check-input" type="checkbox" name="definir_horario_1" id="definir_horario_1" style="transform: scale(1.5);">
+		<input class="form-check-input" type="checkbox" name="definir_horario[]" id="definir_horario_1" style="transform: scale(1.5);">
 		<label class="form-check-label" for="definir_horario_1">
 			Não vou definir horário (ficará agendado como "Dia Todo")
 		</label>
 	</div>
 	<div class="form-check" id="second_date">
-		<input class="form-check-input" type="checkbox" name="definir_horario_2" id="definir_horario_2" style="transform: scale(1.5);">
+		<input class="form-check-input" type="checkbox" name="definir_horario[]" id="definir_horario_2" style="transform: scale(1.5);">
 		<label class="form-check-label" for="definir_horario_2">
 			Os horários serão idênticos
 		</label>
 	</div>
 	<div class="form-check" id="third_date">
-		<input class="form-check-input" type="checkbox" name="definir_horario_3" id="definir_horario_3" style="transform: scale(1.5);">
+		<input class="form-check-input" type="checkbox" name="definir_horario[]" id="definir_horario_3" style="transform: scale(1.5);">
 		<label class="form-check-label" for="definir_horario_3">
 			Os horários serão diferentes
 		</label>
@@ -240,11 +240,17 @@
     		$("#h5_class").removeClass("alert_class");
     		$("#botao_enviar").show();
     		$("#daterange").prop("disabled", false);
+    		$('div#periodo_escolhido_2 #entrada_aux').remove();
+			$('div#periodo_escolhido_2 #saida').remove();
+			$('div#periodo_escolhido_2 #something').remove();
     	}else{
     		$("#myrosterdate").prop("disabled", true);
     		$("#h5_class").addClass("alert_class");
     		$("#botao_enviar").hide();
     		$("#daterange").prop("disabled", true);
+    		$('div#periodo_escolhido_2 #entrada_aux').remove();
+			$('div#periodo_escolhido_2 #saida').remove();
+			$('div#periodo_escolhido_2 #something').remove();
     	}
     });
 
@@ -256,14 +262,18 @@
     		$("#myrosterdate").prop("disabled", false);
     		$("#h5_class").removeClass("alert_class");
     		$("#botao_enviar").show();
-    		$('div#periodo_escolhido_2 #something').remove();
+    		$('div#periodo_escolhido_2 #entrada').remove();
+			$('div#periodo_escolhido_2 #saida').remove();
+			$('div#periodo_escolhido_2 #something').remove();
     		$("#daterange").prop("disabled", false);
     	}else{
     		$("#periodo_escolhido").hide();
     		$("#myrosterdate").prop("disabled", true);
     		$("#h5_class").addClass("alert_class");
     		$("#botao_enviar").hide();
-    		$('div#periodo_escolhido_2 #something').remove();
+    		$('div#periodo_escolhido_2 #entrada').remove();
+			$('div#periodo_escolhido_2 #saida').remove();
+			$('div#periodo_escolhido_2 #something').remove();
     		$("#daterange").prop("disabled", true);
     	}
     });
@@ -285,19 +295,35 @@
 				matriz = array; // numero foi criado no escopo global
 			}
 
+			//CRIAR IF TERCEIRO CHECKBOX CHECKED AND 
 			$('#myrosterdate').change(function(){
 				setNumero($(this).val().split(",").length);
 				setArray($(this).val().split(","));
+
+				/*for (var i = 0; i < numero; i++) {
+					var aux_data = matriz[i].split("/");
+					var entrada_aux = aux_data[0]+"_"+aux_data[1]+"_"+aux_data[2]+"_entrada";
+					var saida_aux = aux_data[0]+"_"+aux_data[1]+"_"+aux_data[2]+"_saida";
+					$('div#periodo_escolhido_2 #12_01_2021_entrada').remove();
+					$('div#periodo_escolhido_2 #12_01_2021_saida').remove();
+					$('div#periodo_escolhido_2 #14_01_2021_entrada').remove();
+					$('div#periodo_escolhido_2 #14_01_2021_saida').remove();
+					console.log(entrada_aux);
+					console.log(entrada_aux);
+				}*/
+
 				$('div#periodo_escolhido_2 #something').remove();
 				for (var i = 0; i < numero; i++) {
-					console.log(matriz[i]);
+
+					//console.log(var_data);
+
 					$('div#periodo_escolhido_2').append('<hr id="something">');
 					$('div#periodo_escolhido_2').append('<span id="something">'+matriz[i]+'</span>');
 					$('div#periodo_escolhido_2').append('<br id="something">');
 					$('div#periodo_escolhido_2').append('<span id="something">INÍCIO: </span>');
-					$('div#periodo_escolhido_2').append('<input type="time" name="something" id="something" /> ');
+					$('div#periodo_escolhido_2').append('<input type="time" name="entrada[]" id="entrada" /> ');
 					$('div#periodo_escolhido_2').append('<span id="something">FIM: </span>');
-					$('div#periodo_escolhido_2').append('<input type="time" name="something" id="something" />');
+					$('div#periodo_escolhido_2').append('<input type="time" name="saida[]" id="saida" />');
 				}
 			});
 			$("#h5_class").removeClass("alert_class");
@@ -306,7 +332,9 @@
     		$("#myrosterdate").prop("disabled", true);
     		$("#h5_class").addClass("alert_class");
     		$("#botao_enviar").hide();
-    		$('div#periodo_escolhido_2 #something').remove();
+    		$('div#periodo_escolhido_2 #entrada').remove();
+			$('div#periodo_escolhido_2 #saida').remove();
+			$('div#periodo_escolhido_2 #something').remove();
     		$("#botao_enviar").hide();
     		$("#daterange").prop("disabled", true);
     	}
@@ -330,8 +358,27 @@
 	      // pega os valores digitados nos inputs
 			var local = $('#local').val();
 			var datepicker = $('#datepicker').val();
+			var myrosterdate = $('#myrosterdate').val();
+			var daterange = $('#daterange').val();
 			var horario_1_inicio = $('#horario_1_inicio').val();
-			var horario_1_fim = $('#horario_1_fim').val();			
+			var horario_1_fim = $('#horario_1_fim').val();
+			var horario_2_inicio = $('#horario_2_inicio').val();
+			var horario_2_fim = $('#horario_2_fim').val();
+			var entrada = $('#entrada').val();
+			var saida = $('#saida').val();
+			var definir_horario_1 = $('#definir_horario_1').val();
+
+			/*for (var i = 0; i < numero; i++) {
+				var aux_data = matriz[i].split("/");
+				var entrada_aux = aux_data[0]+"_"+aux_data[1]+"_"+aux_data[2]+"_entrada";
+				var saida_aux = aux_data[0]+"_"+aux_data[1]+"_"+aux_data[2]+"_saida";
+				//if(i!=numero){
+					var entrada = $('#entrada_aux').val();
+					var saida = $('#saida_aux').val();
+					console.log(entrada);
+					console.log(saida);
+				//}
+			}*/
 
 			// instanciando formdata na variavel fd
 			var fd = new FormData();
@@ -339,8 +386,25 @@
 			// adicionando valores dos inputs na variável fd
 			fd.append('local', local);
 			fd.append('datepicker', datepicker);
+			fd.append('myrosterdate', myrosterdate);
+			fd.append('daterange', daterange);
 			fd.append('horario_1_inicio', horario_1_inicio);
 			fd.append('horario_1_fim', horario_1_fim);
+			fd.append('horario_2_inicio', horario_2_inicio);
+			fd.append('horario_2_fim', horario_2_fim);
+			fd.append('entrada', entrada);
+			fd.append('saida', saida);
+			fd.append('definir_horario_1', definir_horario_1);
+
+			/*for (var i = 0; i < numero; i++) {
+				var aux_data = matriz[i].split("/");
+				var entrada = aux_data[0]+"_"+aux_data[1]+"_"+aux_data[2]+"_entrada";
+				var saida = aux_data[0]+"_"+aux_data[1]+"_"+aux_data[2]+"_saida";
+				if(i!=numero){
+					fd.append(entrada, 'bisteca');
+					fd.append(saida, 'xuvaca');
+				}
+			}*/
 
 			// iniciando função ajax para submissão do form
 			$.ajax({
@@ -356,7 +420,12 @@
 		      });
 		    }
 		  });
-		$('#someform').validate({ //validação do formulário  
+
+		/*if (($("#definir_horario_1").prop('checked') == true) || ($("#definir_horario_2").prop('checked') == true) || ($("#definir_horario_3").prop('checked') == true)){
+			alert('teste');
+		}*/
+
+		$('#someform').validate({ //validação do formulário
 		    rules: {
 		    	local: {
 		    		required: true
@@ -368,6 +437,21 @@
 		    		required: true
 		    	},
 				horario_1_fim: {
+		    		required: true
+		    	},
+		    	horario_2_inicio: {
+		    		required: true
+		    	},
+				horario_2_fim: {
+		    		required: true
+		    	},
+		    	myrosterdate: {
+		    		required: true
+		    	},
+		    	'definir_horario[]': {
+		    		required: true
+		    	},
+		    	entrada: {
 		    		required: true
 		    	},
 		    },
@@ -382,6 +466,12 @@
 		    		required: "Campo Obrigatório",
 		    	},
 				horario_1_fim: {
+		    		required: "Campo Obrigatório",
+		    	},
+		    	myrosterdate: {
+		    		required: "Campo Obrigatório",
+		    	},
+		    	definir_horario: {
 		    		required: "Campo Obrigatório",
 		    	},
 		    },
