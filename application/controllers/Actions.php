@@ -10,29 +10,31 @@ class Actions extends CI_Controller {
 	function enviar_reserva(){
 		if($this->session->userdata("usuario_logado")){
 
-			echo "<pre>";
+			/*echo "<pre>";
 			print_r($_POST);
-			echo "</pre>";
+			echo "</pre>";*/
 
-			//echo $this->input->post("local");
+			$local = mb_strtoupper(($this->input->post('local')), 'UTF-8');
 
-			//echo "<script>console.log($_POST)</script>";
+			$datepicker = mb_strtoupper(($this->input->post('datepicker')), 'UTF-8');
+			$horario_1_inicio = mb_strtoupper(($this->input->post('horario_1_inicio')), 'UTF-8');
+			$horario_1_fim = mb_strtoupper(($this->input->post('horario_1_fim')), 'UTF-8');
 
-			/*$numero_de_produtos = $this->input->post('numero_de_produtos');
-			$identico = $this->input->post('identico');
+			$aux_data = explode("/", $datepicker); //separa data formato pt-br
+			$data = implode("-", $aux_data); //junta data formato mysql
+			$datatime_start = "$data $horario_1_inicio"; //junta data formato mysql + hora início
+			$datatime_end = "$data $horario_1_fim"; //junta data formato mysql + hora fim
 
-			$id_produto_fk = $this->input->post('produto');
-			$data_compra = $this->input->post('data_compra');
-			$data_validade = $this->input->post('data_validade');
-			$valor = $this->input->post('valor_produto');
+			$start_event = date('Y-m-d H:i:00', strtotime($datatime_start)); //datatime start_event
+			$end_event = date('Y-m-d H:i:00', strtotime($datatime_end)); //datatime end_event
 
 			$dados = [
-				'id_produto_fk' => $id_produto_fk,
-				'data_compra' => $data_compra,
-				'data_validade' => $data_validade,
-				'valor' => $valor
-			];			
-			$this->produtos_estoque_model->inserir($dados);*/
+				'start_event' => $start_event,
+				'end_event' => $end_event,
+				'id_local_fk' => $local
+			];
+			
+			$this->reservas_model->inserir($dados);
 
 		}else{
 			$this->load->view('view_login');

@@ -1,6 +1,106 @@
 <?php
 	defined('BASEPATH') OR exit('No direct script access allowed');
+	$local = $this->input->post('local') ? $this->input->post('local') : NULL;
 ?>
+
+<button id="botao_cadastrar" class="btn btn-success"><i class="fas fa-plus-circle"></i> Adicionar nova</button>
+
+<!--  ---------------------------------------- FULLCALENDAR ----------------------------------------  -->
+
+<form method="post" action="<?php echo base_url('page/gerenciar_reservas'); ?>" align="center" id="form_lista">
+	
+	<?php $array_local = array();
+		$array_local = array("" => "--- Selecione um local ---");
+		foreach ($locais as $value) {
+			$array_local[$value->id_local] = $value->nome_local;
+		}
+	$dados['array_local'] = $array_local;
+	echo form_dropdown('local', $array_local, $local, 'id="local" style="width:50%; text-align-last:center; height:40px; margin-bottom:10px"');
+
+	echo "<br>";
+
+	$data = array(
+        'name'          => 'filtrar',
+        'id'            => 'filtrar',
+        'value'         => 'Filtrar',
+        'style'         => 'width:50%;',
+        'class'			=> 'btn btn-outline-primary btn-lg'
+        
+    );
+	echo form_submit($data); ?>
+</form>
+
+<hr>
+
+<script>
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('my_calendar');
+
+    var my_calendar = new FullCalendar.Calendar(calendarEl, {
+		dateClick: function(info) {
+			var splits = info.dateStr.split("-");
+			var datePtBr = splits[2] + "/" + splits[1] + "/" + splits[0];
+
+			var d1 = info.dateStr; //dia clicado
+			var d2 = moment().format("YYYY-MM-DD"); //dia atual
+
+			if (d1 >= d2){
+
+				Swal.fire({
+				  	title: '<?= $dados_usuario->nome; ?>',
+				  	html: 'Deseja acessar as do dia ' + datePtBr + '?',
+				  	icon: 'question',
+				  	confirmButtonText: 'Sim, acessar!',
+				  	showCancelButton: true,
+				  	confirmButtonColor: '#3085d6',
+					cancelButtonColor: '#d33',
+					cancelButtonText: "Não!"
+				}).then((result) => {
+				  if (result.isConfirmed) {
+				  		//code here
+				    }
+				})
+			}
+		},
+    	headerToolbar: {
+	        left: 'prevYear,prev,next,nextYear today',
+	        center: 'title',
+	        right: 'timeGridDay,timeGridWeek,dayGridMonth,listMonth,listYear'
+      	},
+      	// customize the button names,
+		// otherwise they'd all just say "list"
+		views: {
+			listMonth: { buttonText: 'Lista Mensal' },
+			listYear: { buttonText: 'Lista Anual' }
+		},
+		editable: true,
+		//selectable: true,
+		//businessHours: true,
+		//dayMaxEvents: true, // allow "more" link when too many events
+		//locale: 'pt-br',
+        events:"<?= base_url('fullcalendar/load'); ?>?id_local_fk=<?php echo $local_selecionado; ?>",
+		//eventColor: '#FF0000'
+
+
+    });
+
+    my_calendar.render();
+  });
+
+</script>
+
+
+<style>
+	#my_calendar {
+		max-width: 1100px;
+		margin: 0 auto;
+	}
+</style>
+
+<div id='my_calendar'></div>
+
+<!--  ---------------------------------------- FORM CADASTRO ----------------------------------------  -->
 
 <style type="text/css">
 	.alert_class{
@@ -169,6 +269,8 @@
   		$("#first_date").show();
 		$("#second_date").show();
 		$("#third_date").show();
+		$("#my_calendar").hide();
+		$("#form_lista").hide();
   	});
 
   	$("#data_1").change(function(event){
@@ -230,8 +332,12 @@
     $("#horario_unico").change(function(event){
     	if (this.checked){
     		$("#def_horario").hide();
+    		$("#horario_1_inicio").val("00:00");
+    		$("#horario_1_fim").val("23:59");
     	}else{
     		$("#def_horario").show();
+    		$("#horario_1_inicio").val("");
+    		$("#horario_1_fim").val("");
     	}
     });
 
@@ -245,6 +351,10 @@
     		$("#definir_horario_3").prop("checked", false);
     		$("#alerta_horario").hide();
     		$("#periodo_escolhido").hide();
+    		$("#horario_1_inicio").val("");
+    		$("#horario_1_fim").val("");
+    		$("#horario_2_inicio").val("00:00");
+    		$("#horario_2_fim").val("23:59");
     		$("#myrosterdate").prop("disabled", false);
     		$("#h5_class").removeClass("alert_class");
     		$("#botao_enviar").show();
@@ -254,8 +364,12 @@
     		$("#myrosterdate").prop("disabled", true);
     		$("#h5_class").addClass("alert_class");
     		$("#botao_enviar").hide();
+    		$("#horario_2_inicio").val("");
+    		$("#horario_2_fim").val("");
     		$("#daterange").prop("disabled", true);
 			$('div#periodo_escolhido_2 #horario_multiplo').remove();
+			$("#horario_2_inicio").val("");
+    		$("#horario_2_fim").val("");
     	}
     });
 
@@ -267,8 +381,10 @@
     		$("#myrosterdate").prop("disabled", false);
     		$("#h5_class").removeClass("alert_class");
     		$("#botao_enviar").show();
-    		
-			
+    		$("#horario_1_inicio").val("");
+    		$("#horario_1_fim").val("");
+    		$("#horario_2_inicio").val("");
+    		$("#horario_2_fim").val("");			
 			$('div#periodo_escolhido_2 #horario_multiplo').remove();
     		$("#daterange").prop("disabled", false);
     	}else{
@@ -276,8 +392,8 @@
     		$("#myrosterdate").prop("disabled", true);
     		$("#h5_class").addClass("alert_class");
     		$("#botao_enviar").hide();
-    		
-			
+    		$("#horario_2_inicio").val("");
+    		$("#horario_2_fim").val("");			
 			$('div#periodo_escolhido_2 #horario_multiplo').remove();
     		$("#daterange").prop("disabled", true);
     	}
@@ -288,6 +404,10 @@
     		$("#definir_horario_1").prop("checked", false);
     		$("#definir_horario_2").prop("checked", false);
     		$("#periodo_escolhido").hide();
+    		$("#horario_1_inicio").val("");
+    		$("#horario_1_fim").val("");
+    		$("#horario_2_inicio").val("");
+    		$("#horario_2_fim").val("");
     		$("#myrosterdate").prop("disabled", false);
     		$("#daterange").prop("disabled", false);
     		$("#botao_enviar").show();
@@ -308,8 +428,6 @@
 				$('div#periodo_escolhido_2 #horario_multiplo').remove();
 				for (var i = 0; i < numero; i++) {
 
-					//console.log(var_data);
-
 					$('div#periodo_escolhido_2').append('<hr id="horario_multiplo">');
 					$('div#periodo_escolhido_2').append('<span id="horario_multiplo">'+matriz[i]+'</span>');
 					$('div#periodo_escolhido_2').append('<br id="horario_multiplo">');
@@ -325,11 +443,11 @@
     		$("#myrosterdate").prop("disabled", true);
     		$("#h5_class").addClass("alert_class");
     		$("#botao_enviar").hide();
-    		
-			
 			$('div#periodo_escolhido_2 #horario_multiplo').remove();
     		$("#botao_enviar").hide();
     		$("#daterange").prop("disabled", true);
+    		$("#horario_2_inicio").val("");
+    		$("#horario_2_fim").val("");
     	}
     });
 
@@ -357,9 +475,6 @@
 			var horario_1_fim = $('#horario_1_fim').val();
 			var horario_2_inicio = $('#horario_2_inicio').val();
 			var horario_2_fim = $('#horario_2_fim').val();
-			/*var definir_horario_1 = $('#definir_horario_1').val();
-			var definir_horario_2 = $('#definir_horario_2').val();
-			var definir_horario_3 = $('#definir_horario_3').val();*/
 
 			var values = [];
 			$("input[name='horario_multiplo[]']").each(function() {
@@ -378,9 +493,6 @@
 			fd.append('horario_1_fim', horario_1_fim);
 			fd.append('horario_2_inicio', horario_2_inicio);
 			fd.append('horario_2_fim', horario_2_fim);
-			/*fd.append('definir_horario_1', definir_horario_1);
-			fd.append('definir_horario_2', definir_horario_2);
-			fd.append('definir_horario_3', definir_horario_3);*/
 			fd.append('horario_multiplo', values);
 
 			// iniciando função ajax para submissão do form
@@ -392,15 +504,13 @@
 				processData: false,
 				success: function(result) {
 					$('form').trigger("reset");
-					$('#alert').fadeIn().html(result);
-				}
-		      });
+					//$('#alert').fadeIn().html(result);
+					alert(result);
+					//window.location.reload(); 
+					}
+				});
 		    }
-		  });
-
-		/*if (($("#definir_horario_1").prop('checked') == true) || ($("#definir_horario_2").prop('checked') == true) || ($("#definir_horario_3").prop('checked') == true)){
-			alert('teste');
-		}*/
+		});
 
 		$('#someform').validate({ //validação do formulário
 		    rules: {
@@ -426,6 +536,9 @@
 		    		required: true
 		    	},
 		    	'definir_horario[]': {
+		    		required: true
+		    	},
+		    	"values[]": {
 		    		required: true
 		    	},
 		    },
