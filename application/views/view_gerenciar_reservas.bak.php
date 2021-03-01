@@ -1,11 +1,8 @@
-<?php
+<button id="botao_cadastrar" class="btn btn-success"><i class="fas fa-plus-circle"></i> Adicionar nova</button>
 
-defined('BASEPATH') OR exit('No direct script access allowed');
-$local = $this->input->post('local') ? $this->input->post('local') : NULL;
+<!--  ---------------------------------------- FULLCALENDAR ----------------------------------------  -->
 
-?>
-
-<form method="post" action="<?php echo base_url('page/gerenciar_reservas'); ?>" align="center">
+<form method="post" action="<?php echo base_url('page/gerenciar_reservas'); ?>" align="center" id="form_lista">
 	
 	<?php $array_local = array();
 		$array_local = array("" => "--- Selecione um local ---");

@@ -3,102 +3,7 @@
 	$local = $this->input->post('local') ? $this->input->post('local') : NULL;
 ?>
 
-<button id="botao_cadastrar" class="btn btn-success"><i class="fas fa-plus-circle"></i> Adicionar nova</button>
 
-<!--  ---------------------------------------- FULLCALENDAR ----------------------------------------  -->
-
-<form method="post" action="<?php echo base_url('page/gerenciar_reservas'); ?>" align="center" id="form_lista">
-	
-	<?php $array_local = array();
-		$array_local = array("" => "--- Selecione um local ---");
-		foreach ($locais as $value) {
-			$array_local[$value->id_local] = $value->nome_local;
-		}
-	$dados['array_local'] = $array_local;
-	echo form_dropdown('local', $array_local, $local, 'id="local" style="width:50%; text-align-last:center; height:40px; margin-bottom:10px"');
-
-	echo "<br>";
-
-	$data = array(
-        'name'          => 'filtrar',
-        'id'            => 'filtrar',
-        'value'         => 'Filtrar',
-        'style'         => 'width:50%;',
-        'class'			=> 'btn btn-outline-primary btn-lg'
-        
-    );
-	echo form_submit($data); ?>
-</form>
-
-<hr>
-
-<script>
-
-  document.addEventListener('DOMContentLoaded', function() {
-    var calendarEl = document.getElementById('my_calendar');
-
-    var my_calendar = new FullCalendar.Calendar(calendarEl, {
-		dateClick: function(info) {
-			var splits = info.dateStr.split("-");
-			var datePtBr = splits[2] + "/" + splits[1] + "/" + splits[0];
-
-			var d1 = info.dateStr; //dia clicado
-			var d2 = moment().format("YYYY-MM-DD"); //dia atual
-
-			if (d1 >= d2){
-
-				Swal.fire({
-				  	title: '<?= $dados_usuario->nome; ?>',
-				  	html: 'Deseja acessar as do dia ' + datePtBr + '?',
-				  	icon: 'question',
-				  	confirmButtonText: 'Sim, acessar!',
-				  	showCancelButton: true,
-				  	confirmButtonColor: '#3085d6',
-					cancelButtonColor: '#d33',
-					cancelButtonText: "Não!"
-				}).then((result) => {
-				  if (result.isConfirmed) {
-				  		//code here
-				    }
-				})
-			}
-		},
-    	headerToolbar: {
-	        left: 'prevYear,prev,next,nextYear today',
-	        center: 'title',
-	        right: 'timeGridDay,timeGridWeek,dayGridMonth,listMonth,listYear'
-      	},
-      	// customize the button names,
-		// otherwise they'd all just say "list"
-		views: {
-			listMonth: { buttonText: 'Lista Mensal' },
-			listYear: { buttonText: 'Lista Anual' }
-		},
-		editable: true,
-		//selectable: true,
-		//businessHours: true,
-		//dayMaxEvents: true, // allow "more" link when too many events
-		//locale: 'pt-br',
-        events:"<?= base_url('fullcalendar/load'); ?>?id_local_fk=<?php echo $local_selecionado; ?>",
-		//eventColor: '#FF0000'
-
-
-    });
-
-    my_calendar.render();
-  });
-
-</script>
-
-
-<style>
-	#my_calendar {
-		max-width: 1100px;
-		margin: 0 auto;
-	}
-</style>
-
-<div id='my_calendar'></div>
 
 <!--  ---------------------------------------- FORM CADASTRO ----------------------------------------  -->
 
@@ -114,6 +19,12 @@
 <form id="someform" enctype="multipart/form-data">
 
 <div class="alert" id="alert" role="alert"></div>
+
+<div class="alert alert-info" role="alert" id="alerta_nome_evento">
+	<h5><b>DIGITE O NOME DO EVENTO</b></h5>
+	<hr>
+	<input type="text" id="nome_evento" class="form-control" placeholder="Digite">
+</div>
 
 <div class="alert alert-info" role="alert" id="alerta_local">
 	<h5><b>SELECIONE O LOCAL</b></h5>
@@ -254,6 +165,7 @@
 	$("#first_date").hide();
 	$("#second_date").hide();
 	$("#third_date").hide();
+	$("#alerta_nome_evento").hide();
 	$("#alerta_local").hide();
 	$("#alerta_periodo").hide();
 	$("#alerta_horario").hide();
@@ -264,6 +176,7 @@
 	//esconde a div do grocery crud e exibe o form para cadastro
   	$("#botao_cadastrar").click(function() {
   		$("#botao_cadastrar").hide();
+  		$("#alerta_nome_evento").show();
   		$("#alerta_local").show();
   		$("#alerta_periodo").show();
   		$("#first_date").show();
@@ -413,7 +326,7 @@
     		$("#botao_enviar").show();
 
     		function setNumero(number) {
-			numero = number; // numero foi criado no escopo global
+				numero = number; // numero foi criado no escopo global
 			}
 
 			function setArray(array) {
@@ -466,7 +379,10 @@
 	//validação
 	$.validator.setDefaults({
 	    submitHandler: function () {
-	      // pega os valores digitados nos inputs
+
+	      	// pega os valores digitados nos inputs
+
+	      	var nome_evento = $('#nome_evento').val();
 			var local = $('#local').val();
 			var datepicker = $('#datepicker').val();
 			var myrosterdate = $('#myrosterdate').val();
@@ -485,6 +401,7 @@
 			var fd = new FormData();
 
 			// adicionando valores dos inputs na variável fd
+			fd.append('nome_evento', nome_evento);
 			fd.append('local', local);
 			fd.append('datepicker', datepicker);
 			fd.append('myrosterdate', myrosterdate);
@@ -505,7 +422,7 @@
 				success: function(result) {
 					$('form').trigger("reset");
 					//$('#alert').fadeIn().html(result);
-					alert(result);
+					console.log(result);
 					//window.location.reload(); 
 					}
 				});
@@ -514,6 +431,9 @@
 
 		$('#someform').validate({ //validação do formulário
 		    rules: {
+		    	nome_evento: {
+		    		required: true
+		    	},
 		    	local: {
 		    		required: true
 		    	},
@@ -543,6 +463,9 @@
 		    	},
 		    },
 		    messages: {
+		    	nome_evento: {
+		        	required: "Campo Obrigatório",
+		      	},
 		    	local: {
 		        	required: "Campo Obrigatório",
 		      	},

@@ -10,10 +10,11 @@ class Actions extends CI_Controller {
 	function enviar_reserva(){
 		if($this->session->userdata("usuario_logado")){
 
-			/*echo "<pre>";
+			echo "<pre>";
 			print_r($_POST);
-			echo "</pre>";*/
+			echo "</pre>";
 
+			$nome_evento = mb_strtoupper(($this->input->post('nome_evento')), 'UTF-8');
 			$local = mb_strtoupper(($this->input->post('local')), 'UTF-8');
 
 			$datepicker = mb_strtoupper(($this->input->post('datepicker')), 'UTF-8');
@@ -29,12 +30,33 @@ class Actions extends CI_Controller {
 			$end_event = date('Y-m-d H:i:00', strtotime($datatime_end)); //datatime end_event
 
 			$dados = [
+				'title' => $nome_evento,
 				'start_event' => $start_event,
 				'end_event' => $end_event,
 				'id_local_fk' => $local
 			];
-			
-			$this->reservas_model->inserir($dados);
+
+
+			/*
+			apenas um dia
+			[datepicker] => 06/04/2021
+			[horario_1_inicio] => 12:00
+			[horario_1_fim] => 12:00
+
+			dias não seguidos
+			[myrosterdate] => 09/03/2021,10/03/2021,11/03/2021
+			[daterange] => 02/03/2021 - 05/03/2021
+				dia todo ou horários idênticos{
+					[horario_2_inicio] => 00:00
+    				[horario_2_fim] => 23:59
+				}
+				horário múltiplo{
+					[horario_multiplo] => 07:00,08:00,10:00,12:00,14:00,15:30
+				}
+				
+			*/
+
+			//$this->reservas_model->inserir($dados);
 
 		}else{
 			$this->load->view('view_login');
