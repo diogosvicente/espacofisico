@@ -97,10 +97,10 @@
 		</div>
 	</div>
 
-	
+	<div id="botao_enviar">
 		<hr>
 		<button type="submit" name="submit" id="submit" class="btn btn-success" value="Cadastrar">Cadastrar</button>
-	
+	</div>
 </div>
 
 <div class="alert alert-info" role="alert" id="alerta_horario_definir">
@@ -147,10 +147,6 @@
 		<hr>
 		<button type="submit" name="submit" id="submit" class="btn btn-success" value="Cadastrar">Cadastrar</button>
 	</div>
-	<div id="botao_definir_horarios">
-		<hr>
-		<button type="submit" name="submit" id="definir_horarios" class="btn btn-success" value="Definir Horários">Definir Horários</button>
-	</div>
 </div>
 
 
@@ -176,7 +172,6 @@
 	$("#alerta_horario_definir").hide();
 	$("#periodo_escolhido").hide();
 	$("#botao_enviar").hide();
-	$("#botao_definir_horarios").hide();
 		
 	//esconde a div do grocery crud e exibe o form para cadastro
   	$("#botao_cadastrar").click(function() {
@@ -203,7 +198,6 @@
 			$("#alerta_horario").show();
 			$("#alerta_horario_definir").hide();
 			$("#botao_enviar").show();
-			$("#botao_definir_horarios").hide();
     	}else{
     		$("#datepicker").hide();
     		$("#datepicker").val("");
@@ -277,8 +271,8 @@
     		$("#myrosterdate").prop("disabled", false);
     		$("#h5_class").removeClass("alert_class");
     		$("#botao_enviar").show();
-    		$("#botao_definir_horarios").hide();
     		$("#daterange").prop("disabled", false);
+			$('div#periodo_escolhido_2 #horario_multiplo').remove();
     	}else{
     		$("#myrosterdate").prop("disabled", true);
     		$("#h5_class").addClass("alert_class");
@@ -286,6 +280,7 @@
     		$("#horario_2_inicio").val("");
     		$("#horario_2_fim").val("");
     		$("#daterange").prop("disabled", true);
+			$('div#periodo_escolhido_2 #horario_multiplo').remove();
 			$("#horario_2_inicio").val("");
     		$("#horario_2_fim").val("");
     	}
@@ -299,11 +294,11 @@
     		$("#myrosterdate").prop("disabled", false);
     		$("#h5_class").removeClass("alert_class");
     		$("#botao_enviar").show();
-    		$("#botao_definir_horarios").hide();
     		$("#horario_1_inicio").val("");
     		$("#horario_1_fim").val("");
     		$("#horario_2_inicio").val("");
-    		$("#horario_2_fim").val("");
+    		$("#horario_2_fim").val("");			
+			$('div#periodo_escolhido_2 #horario_multiplo').remove();
     		$("#daterange").prop("disabled", false);
     	}else{
     		$("#periodo_escolhido").hide();
@@ -311,7 +306,8 @@
     		$("#h5_class").addClass("alert_class");
     		$("#botao_enviar").hide();
     		$("#horario_2_inicio").val("");
-    		$("#horario_2_fim").val("");
+    		$("#horario_2_fim").val("");			
+			$('div#periodo_escolhido_2 #horario_multiplo').remove();
     		$("#daterange").prop("disabled", true);
     	}
     });
@@ -327,13 +323,40 @@
     		$("#horario_2_fim").val("");
     		$("#myrosterdate").prop("disabled", false);
     		$("#daterange").prop("disabled", false);
+    		$("#botao_enviar").show();
+
+    		function setNumero(number) {
+				numero = number; // numero foi criado no escopo global
+			}
+
+			function setArray(array) {
+				matriz = array; // numero foi criado no escopo global
+			}
+
+			//CRIAR IF TERCEIRO CHECKBOX CHECKED AND 
+			$('#myrosterdate').change(function(){
+				setNumero($(this).val().split(",").length);
+				setArray($(this).val().split(","));
+
+				$('div#periodo_escolhido_2 #horario_multiplo').remove();
+				for (var i = 0; i < numero; i++) {
+
+					$('div#periodo_escolhido_2').append('<hr id="horario_multiplo">');
+					$('div#periodo_escolhido_2').append('<span id="horario_multiplo">'+matriz[i]+'</span>');
+					$('div#periodo_escolhido_2').append('<br id="horario_multiplo">');
+					$('div#periodo_escolhido_2').append('<span id="horario_multiplo">INÍCIO: </span>');
+					$('div#periodo_escolhido_2').append('<input type="time" name="horario_multiplo[]" id="horario_multiplo" /> ');
+					$('div#periodo_escolhido_2').append('<span id="horario_multiplo">FIM: </span>');
+					$('div#periodo_escolhido_2').append('<input type="time" name="horario_multiplo[]" id="horario_multiplo" />');
+				}
+			});
 			$("#h5_class").removeClass("alert_class");
-			$("#botao_definir_horarios").show();
-			$("#botao_enviar").hide();
+			$("#botao_enviar").show();
     	}else{
     		$("#myrosterdate").prop("disabled", true);
     		$("#h5_class").addClass("alert_class");
-    		$("#botao_definir_horarios").hide();
+    		$("#botao_enviar").hide();
+			$('div#periodo_escolhido_2 #horario_multiplo').remove();
     		$("#botao_enviar").hide();
     		$("#daterange").prop("disabled", true);
     		$("#horario_2_inicio").val("");
@@ -369,6 +392,11 @@
 			var horario_2_inicio = $('#horario_2_inicio').val();
 			var horario_2_fim = $('#horario_2_fim').val();
 
+			var values = [];
+			$("input[name='horario_multiplo[]']").each(function() {
+			    values.push($(this).val());
+			});
+
 			// instanciando formdata na variavel fd
 			var fd = new FormData();
 
@@ -382,6 +410,7 @@
 			fd.append('horario_1_fim', horario_1_fim);
 			fd.append('horario_2_inicio', horario_2_inicio);
 			fd.append('horario_2_fim', horario_2_fim);
+			fd.append('horario_multiplo', values);
 
 			// iniciando função ajax para submissão do form
 			$.ajax({
@@ -427,6 +456,9 @@
 		    		required: true
 		    	},
 		    	'definir_horario[]': {
+		    		required: true
+		    	},
+		    	"values[]": {
 		    		required: true
 		    	},
 		    },
