@@ -56,7 +56,7 @@ class Actions extends CI_Controller {
 				
 			*/
 
-			//$this->reservas_model->inserir($dados);
+			$this->reservas_model->inserir($dados);
 
 		}else{
 			$this->load->view('view_login');

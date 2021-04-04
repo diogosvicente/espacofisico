@@ -391,10 +391,10 @@
 				contentType: false,
 				processData: false,
 				success: function(result) {
-					$('form').trigger("reset");
+					//$('form').trigger("reset");
 					//$('#alert').fadeIn().html(result);
 					console.log(result);
-					//window.location.reload(); 
+					//window.location.reload();
 					}
 				});
 		    }
