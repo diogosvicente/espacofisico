@@ -16,7 +16,7 @@
 <button id="botao_cadastrar" class="btn btn-success"><i class="fas fa-plus-circle"></i> Adicionar nova</button>
 <button id="botao_grocery_crud" class="btn btn-info"><i class="fa fa-list" aria-hidden="true"></i> Exibir espaços reservados</button>
 
-<form id="someform" enctype="multipart/form-data">
+<form method="post" action="">
 
 <div class="alert" id="alert" role="alert"></div>
 
@@ -352,119 +352,6 @@
 		language: 'pt-BR'
 	};
 	date_input.datepicker(options);
-
-	//validação
-	$.validator.setDefaults({
-	    submitHandler: function () {
-
-	      	// pega os valores digitados nos inputs
-
-	      	var nome_evento = $('#nome_evento').val();
-			var local = $('#local').val();
-			var datepicker = $('#datepicker').val();
-			var myrosterdate = $('#myrosterdate').val();
-			var daterange = $('#daterange').val();
-			var horario_1_inicio = $('#horario_1_inicio').val();
-			var horario_1_fim = $('#horario_1_fim').val();
-			var horario_2_inicio = $('#horario_2_inicio').val();
-			var horario_2_fim = $('#horario_2_fim').val();
-
-			// instanciando formdata na variavel fd
-			var fd = new FormData();
-
-			// adicionando valores dos inputs na variável fd
-			fd.append('nome_evento', nome_evento);
-			fd.append('local', local);
-			fd.append('datepicker', datepicker);
-			fd.append('myrosterdate', myrosterdate);
-			fd.append('daterange', daterange);
-			fd.append('horario_1_inicio', horario_1_inicio);
-			fd.append('horario_1_fim', horario_1_fim);
-			fd.append('horario_2_inicio', horario_2_inicio);
-			fd.append('horario_2_fim', horario_2_fim);
-
-			// iniciando função ajax para submissão do form
-			$.ajax({
-				url:'<?php echo base_url("actions/enviar_reserva"); ?>',
-				method: 'post',
-				data: fd,
-				contentType: false,
-				processData: false,
-				success: function(result) {
-					//$('form').trigger("reset");
-					//$('#alert').fadeIn().html(result);
-					console.log(result);
-					//window.location.reload();
-					}
-				});
-		    }
-		});
-
-		$('#someform').validate({ //validação do formulário
-		    rules: {
-		    	nome_evento: {
-		    		required: true
-		    	},
-		    	local: {
-		    		required: true
-		    	},
-		    	datepicker: {
-		    		required: true
-		    	},
-		    	horario_1_inicio: {
-		    		required: true
-		    	},
-				horario_1_fim: {
-		    		required: true
-		    	},
-		    	horario_2_inicio: {
-		    		required: true
-		    	},
-				horario_2_fim: {
-		    		required: true
-		    	},
-		    	myrosterdate: {
-		    		required: true
-		    	},
-		    	'definir_horario[]': {
-		    		required: true
-		    	},
-		    },
-		    messages: {
-		    	nome_evento: {
-		        	required: "Campo Obrigatório",
-		      	},
-		    	local: {
-		        	required: "Campo Obrigatório",
-		      	},
-		      	datepicker: {
-			        required: "Campo Obrigatório",
-		      	},
-		      	horario_1_inicio: {
-		    		required: "Campo Obrigatório",
-		    	},
-				horario_1_fim: {
-		    		required: "Campo Obrigatório",
-		    	},
-		    	myrosterdate: {
-		    		required: "Campo Obrigatório",
-		    	},
-		    	definir_horario: {
-		    		required: "Campo Obrigatório",
-		    	},
-		    },
-		    errorElement: 'span',
-		    errorPlacement: function (error, element) {
-		      error.addClass('invalid-feedback');
-		      element.closest('.form-group').append(error);
-		    },
-		    highlight: function (element, errorClass, validClass) {
-		      $(element).addClass('is-invalid');
-		    },
-		    unhighlight: function (element, errorClass, validClass) {
-		      $(element).removeClass('is-invalid');
-		    }
-		  });
 
 	// input tipo data única
 	$("#datepicker").datepicker({
