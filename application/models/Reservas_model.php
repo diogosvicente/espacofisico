@@ -1,11 +1,9 @@
 <?php
 class Reservas_model extends CI_Model
 {
-	public function inserir($data){
+	public function inserir(){
 
-		//$this->db->insert('events', $data);
-		$response = 'cadastrado com sucesso...';	  
-		//echo ($response);
-		return $data;
+		echo "Cadastrado com sucesso";
+		
 	}
 }
